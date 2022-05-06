@@ -111,7 +111,7 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4" id="group_creating">
-        <h1 class="h3 mb-0 text-gray-800">Users</h1>
+        <h1 class="h3 mb-0 text-gray-800">Roles</h1>
 
         <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal"
                 data-target="#add_role">

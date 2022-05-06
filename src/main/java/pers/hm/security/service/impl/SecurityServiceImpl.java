@@ -160,7 +160,15 @@ public class SecurityServiceImpl implements SecurityService{
             return responseDto;
         }
 
-        u.getRoles().add(r); // use set to store the role --> it make sure that the same role cannot be appeared many times
+        // use set to store the role --> it make sure that the same role cannot be appeared many times
+        HashSet<Role> roles = u.getRoles();
+        if(null == roles){
+            roles = new HashSet<>();
+            roles.add(r);
+            u.setRoles(roles);
+        }else {
+            u.getRoles().add(r);
+        }
         responseDto.setResultCode(ResponseCode.SUCCESS.code());
         return responseDto;
     }
@@ -170,7 +178,12 @@ public class SecurityServiceImpl implements SecurityService{
         ResponseDto responseDto = new ResponseDto();
 
         User u = SecurityCache.getInstance().findUserByName(username);
-        if (!u.getPassword().equals(generateMD5(password))) {
+        if (null == u) {
+            responseDto.setResultCode(ResponseCode.FAIL.code());
+            responseDto.setResultMsg("User is not exist!");
+            return responseDto;
+        }
+        if (null == u.getPassword() || !u.getPassword().equals(generateMD5(password))) {
             responseDto.setResultCode(ResponseCode.FAIL.code());
             responseDto.setResultMsg("Password is wrong!");
             return responseDto;
@@ -213,7 +226,7 @@ public class SecurityServiceImpl implements SecurityService{
      * @return
      */
     public Set<Role> listRoles(String userName) {
-        User u = SecurityCache.getInstance().getUserMap().get("userName");
+        User u = SecurityCache.getInstance().getUserMap().get(userName);
         if (null == u) {
             return null;
         }

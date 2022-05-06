@@ -41,6 +41,8 @@ public class LoginServlet extends HttpServlet{
             // 2h = 2 * 60 * 60
             session.setMaxInactiveInterval(7200);
             resp.sendRedirect(resp.encodeRedirectURL("/main.jsp"));
+        }else {
+            resp.sendRedirect("/index.jsp");
         }
     }
 }
