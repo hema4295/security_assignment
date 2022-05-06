@@ -1,6 +1,7 @@
 package pers.hm.security.servlet;
 
 import org.json.JSONObject;
+import pers.hm.security.domain.Role;
 import pers.hm.security.domain.User;
 import pers.hm.security.dto.ResponseDto;
 import pers.hm.security.enums.ResponseCode;
@@ -68,6 +69,30 @@ public class UserServlet extends HttpServlet{
             User uu = new User(userName);
             responseDto = securityService.deleteUser(uu);
             System.out.println("Complete deleting the user, the response code is " + responseDto.getResultCode());
+        } else if (path.equals("/addRole")) { // add role for user
+            String userName = req.getParameter("username");
+            if (null == userName || "".equals(userName)) {
+                responseDto.setResultCode(ResponseCode.FAIL.code());
+                responseDto.setResultMsg("Fail to add a role, the user name should be NOT blank!");
+            }
+            User uu = new User(userName);
+
+            String roleName = req.getParameter("roleRadio");
+            if (null == roleName || "".equals(roleName)) {
+                responseDto.setResultCode(ResponseCode.FAIL.code());
+                responseDto.setResultMsg("Fail to add a role, the role name should be NOT blank!");
+            }
+            Role rr = new Role(roleName);
+
+            System.out.println("start to add a role for user..., userName = " + userName);
+            responseDto = securityService.addRoleForUser(rr, uu);
+            System.out.println("Complete adding a role for the user, the response code is " + responseDto.getResultCode());
+            resp.setContentType("text/html");
+            PrintWriter out = resp.getWriter();
+            String htmlStr = "<html><head><title></title></head><body><p align=\"center\"><font size=\"6px\">redirecting...</font></p></body></html><script language=\"javascript\"> setTimeout(function () { window.close(); window.opener.location.reload(); }, 1000) </script>";
+            out.println(htmlStr);
+            out.close();
+            return;
         }
 
         resp.setContentType("text/html");

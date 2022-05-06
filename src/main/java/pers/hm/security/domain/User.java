@@ -1,7 +1,7 @@
 package pers.hm.security.domain;
 
 import java.io.Serializable;
-import java.util.SortedSet;
+import java.util.HashSet;
 
 /**
  * User.java
@@ -16,13 +16,21 @@ public class User implements Serializable{
     private String userName;
     private String password;
     private Integer isDelete;
-    private SortedSet<Role> roles;
+    private HashSet<Role> roles;
 
     public User() {
     }
 
     public User(String userName) {
         this.userName = userName;
+    }
+
+    public User(Long userId, String userName, String password, Integer isDelete, HashSet<Role> roles) {
+        this.userId = userId;
+        this.userName = userName;
+        this.password = password;
+        this.isDelete = isDelete;
+        this.roles = roles;
     }
 
     public Long getUserId() {
@@ -57,11 +65,11 @@ public class User implements Serializable{
         this.isDelete = isDelete;
     }
 
-    public SortedSet<Role> getRoles() {
+    public HashSet<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(SortedSet<Role> roles) {
+    public void setRoles(HashSet<Role> roles) {
         this.roles = roles;
     }
 }

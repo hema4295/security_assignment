@@ -22,6 +22,12 @@ public class Role implements Serializable{
         this.roleName = roleName;
     }
 
+    public Role(Long roleId, String roleName, Integer isDelete) {
+        this.roleId = roleId;
+        this.roleName = roleName;
+        this.isDelete = isDelete;
+    }
+
     public Long getRoleId() {
         return roleId;
     }

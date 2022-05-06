@@ -38,9 +38,8 @@
             var trStr = '';
             var successStr = '<a href=\"#\" class=\"btn btn-success btn-icon-split\"><span class=\"text\">Normal</span></a>';
             var deleteStr = '<a href=\"#\" class=\"btn btn-danger btn-icon-split\"><span class=\"text\">Deleted</span></a>';
-            var addRoleStr1 = '<a href=\"#\" data-whatever=\"';
-            var addRoleStr2 = '\" onclick=\"addRole4User(\'';
-            var addRoleStr3 = '\')\">Add Role</a>';
+            var addRoleStr1 = '<a href=\"#\" onclick=\"openRoles(\'';
+            var addRoleStr2 = '\')\">Add Role</a>';
             if (users != null && users != undefined) {
                 for (var i = 0; i < users.length; i++) {
                     var tdStr = '<tr><td>' + users[i].userName + '</td>' + '<td>';
@@ -50,7 +49,17 @@
                         tdStr = tdStr + successStr;
                     }
 
-                    tdStr = tdStr + '</td>' + '<td><a href=\"#\" onclick=\"deleteUser(\'' + users[i].userName + '\')\">Delete the user</a> &nbsp;&nbsp;&nbsp;' + addRoleStr1 + users[i].userName + addRoleStr2 + users[i].userName + addRoleStr3 + '</td></tr>';
+                    var roles = users[i].roles;
+                    if (roles != null && roles != undefined) {
+                        var roleStr = '';
+                        for (var j = 0; j < roles.length; j++) {
+                            roleStr = roleStr + roles[j].roleName + ";"
+                        }
+                    }
+
+                    tdStr = tdStr + '</td><td>' +roleStr +'</td>';
+
+                    tdStr = tdStr + '<td><a href=\"#\" onclick=\"deleteUser(\'' + users[i].userName + '\')\">Delete the user</a> &nbsp;&nbsp;&nbsp;' + addRoleStr1 + users[i].userName + addRoleStr2 + '</td></tr>';
                     trStr = trStr + tdStr;
                 }
             }
@@ -92,39 +101,6 @@
                 }
             });
 
-            // add role modal window
-            // get all roles
-            var rst = ajaxGetRequest('/role/listRoles');
-            if (rst == 'error') {
-                alert("Fail to get roles!")
-            } else if (rst.resultCode != '0') {
-                alert(rst.resultMsg)
-            }
-
-            var roleObj = rst.resultData;
-            var roles = eval(roleObj);
-            console.log(roles);
-            var divStr = '';
-            var divStr1 = '<div class=\"form-check\"><input type=\"radio\" class=\"form-check-input\" id=\"radio1\" name=\"optradio\" value=\"option1\"><label class=\"form-check-label\" for=\"radio1\">';
-            var divStr2 = '</label></div>';
-
-            if (roles != null && roles != undefined) {
-                for (var i = 0; i < roles.length; i++) {
-                    var str = divStr1 + roles[i].roleName + divStr2;
-                    divStr = divStr + str;
-                }
-            }
-            divStr = divStr + '<button type=\"submit\" class=\"btn btn-primary mt-3\">Add</button>';
-            $("#roleRadio").append(divStr);
-
-            // pass parameters to modal
-            $('#add_role_user').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget) // 触发事件的按钮
-                var para = button.data('whatever') // 解析出data-whatever内容
-                var modal = $(this)
-                modal.find('.modal-title').text('Message To ' + para)
-                modal.find('.modal-body input').val(para)
-            });
 
         });
 
@@ -149,32 +125,11 @@
             }
         }
 
-        function addRole4User(userName) {
-            if (userName == "") {
-                alert("User name cannot be blank!");
-                return;
-            }
-
-            // open a window
-            $("#add_u_name").val(userName);
-            $('#add_role_user').modal('show');
-
-            // var rst = ajaxPostRequest('/user/addRole4User', {
-            //     'username': userName,
-            //     'roleName': roleName
-            // });
-            //
-            // if (rst == 'error') {
-            //     alert("Fail to add a role for the user!");
-            // } else if (rst.resultCode != '0') {
-            //     alert(rst.resultMsg);
-            // } else if (rst.resultCode == '0') {
-            //     alert("successfully add a role for the user!");
-            //     // refresh
-            //     $('#PageMainContent').load('/user/list');
-            // }
+        function openRoles(userName) {
+            var win = window.open("/user_role.jsp?userName=" + userName, "child","width=500px,height=300px,resizable=no,scroll=no,status=no");
+            win.blur();
+            win.focus();
         }
-
 
     </script>
 
@@ -199,6 +154,7 @@
                     <tr>
                         <th>User Name</th>
                         <th>Status</th>
+                        <th>Roles</th>
                         <th>Operation</th>
                     </tr>
                     </thead>
@@ -244,28 +200,5 @@
         </div>
     </div>
 </div>
-
-<!-- The Modal window for add a role for user-->
-<div class="modal fade" id="add_role_user">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Add a Role for User</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form action="/user/addRole4User" id="roleRadio">
-
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 </body>
 </html>

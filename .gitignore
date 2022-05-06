@@ -1,0 +1,15 @@
+.idea/**
+.gradle/**
+build/**
+lib/**
+out/**
+paas/artifacts/*.gz
+paas/dsrd/*
+
+# Java class files
+*.class
+
+#logs
+app.*
+.DS_Store
+*.iml
