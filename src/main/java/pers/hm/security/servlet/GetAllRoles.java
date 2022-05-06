@@ -14,17 +14,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Set;
 
 /**
- * CheckRoleServlet.java
+ * GetAllRoles.java
  *
  * @description:
  * @author: Heng Ma
  * @email: hema4295@uni.sydney.edu.au
  * @since: 06/05/2022
  */
-@WebServlet(urlPatterns = "/checkRole")
-public class CheckRoleServlet extends HttpServlet{
+@WebServlet(urlPatterns = "/getAllRoles")
+public class GetAllRoles extends HttpServlet{
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter out = resp.getWriter();
@@ -37,30 +38,27 @@ public class CheckRoleServlet extends HttpServlet{
             return;
         }
 
-        String roleName = req.getParameter("roleName");
-        if (null == roleName || "".equals(roleName)) {
-            out.println("<font color='red' size='6'>role is null, fail to check it</font>");
+        CustomiseSessionContext sessContext = CustomiseSessionContext.getInstance();
+        HttpSession sess = sessContext.getSession(token);
+        if (null == sess) {
+            out.println("<font color='red' size='6'>The Token is already Invalidated</font>");
             out.close();
             return;
         }
+        // get the user
+        User currentUser = (User) sess.getAttribute("current_user");
+        Set<Role> roles = securityService.listRoles(currentUser.getUserName());
 
-        CustomiseSessionContext sessContext = CustomiseSessionContext.getInstance();
-        HttpSession sess = sessContext.getSession(token);
-
-        if (null != sess) {
-            // get the user
-            User currentUser = (User) sess.getAttribute("current_user");
-            Role role = new Role(roleName);
-            boolean result = securityService.checkRoleByUser(currentUser, role);
-            if (result) {
-                out.println("<font color='red' size='6'>The current user:" + currentUser.getUserName() + " belongs to the role:" + roleName + "</font>");
-                out.close();
-            } else {
-                out.println("<font color='red' size='6'>The current user:" + currentUser.getUserName() + " does NOT belong to the role:" + roleName + "</font>");
-                out.close();
+        if (null != roles && roles.size() > 0) {
+            out.println("<font color='red' size='6'>The current user:" + currentUser.getUserName() + " belongs to the following roles: </font>");
+            out.println("<table>");
+            for (Role r : roles) {
+                out.println("<tr><td>" + r.getRoleName() + "</td></tr>");
             }
+            out.println("</table>");
+            out.close();
         } else {
-            out.println("<font color='red' size='6'>The Token is already Invalidated</font>");
+            out.println("<font color='red' size='6'>The current user:" + currentUser.getUserName() + " does NOT belong to any roles</font>");
             out.close();
         }
     }

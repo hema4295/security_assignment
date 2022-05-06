@@ -12,6 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * SecurityServiceImpl.java
@@ -183,14 +185,39 @@ public class SecurityServiceImpl implements SecurityService{
         return null;
     }
 
-    @Override
-    public ResponseDto checkRole() {
-        return null;
+    /**
+     * check whether the role belongs to the role
+     *
+     * @param user
+     * @param role
+     * @return
+     */
+    public boolean checkRoleByUser(User user, Role role) {
+        SortedSet<Role> roles = user.getRoles();
+        if (null == roles || roles.size() == 0) {
+            return false;
+        }
+
+        for (Role r : roles) {
+            if (r.getRoleName().equals(role.getRoleName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    @Override
-    public ResponseDto listRoles() {
-        return null;
+    /**
+     * list all roles of the given userName
+     *
+     * @param userName
+     * @return
+     */
+    public Set<Role> listRoles(String userName) {
+        User u = SecurityCache.getInstance().getUserMap().get("userName");
+        if (null == u) {
+            return null;
+        }
+        return u.getRoles();
     }
 
     /**

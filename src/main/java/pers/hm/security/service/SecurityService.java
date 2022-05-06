@@ -4,6 +4,8 @@ import pers.hm.security.domain.Role;
 import pers.hm.security.domain.User;
 import pers.hm.security.dto.ResponseDto;
 
+import java.util.Set;
+
 /**
  * Created by maheng on 5/5/22.
  */
@@ -37,9 +39,21 @@ public interface SecurityService{
 
     public ResponseDto invalidate();
 
-    public ResponseDto checkRole();
+    /**
+     * check whether the role belongs to the role
+     *
+     * @param user
+     * @param role
+     * @return
+     */
+    public boolean checkRoleByUser(User user, Role role);
 
-    public ResponseDto listRoles();
+    /**
+     * list all roles of the given userName
+     * @param userName
+     * @return
+     */
+    public Set<Role> listRoles(String userName);
 
     /**
      * get all valid users
